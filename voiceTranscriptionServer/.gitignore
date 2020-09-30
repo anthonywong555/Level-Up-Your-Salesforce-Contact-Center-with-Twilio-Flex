@@ -1,0 +1,5 @@
+.env
+node_modules/
+google_creds.json
+transcriptions/
+.DS_Store

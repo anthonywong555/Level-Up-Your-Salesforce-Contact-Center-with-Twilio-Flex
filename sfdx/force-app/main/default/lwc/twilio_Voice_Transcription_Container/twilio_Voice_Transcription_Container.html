@@ -1,0 +1,117 @@
+<template>
+    <lightning-card
+      title="Twilio Media Streams Transcript"
+      icon-name="custom:custom14"
+    >
+      <div class="slds-m-around_medium">
+        <p>
+          Use the buttons below to subscribe and unsubscribe to a streaming
+          channel!
+        </p>
+        <lightning-button
+          variant="success"
+          label="Subscribe"
+          title="Subscribe"
+          onclick={handleSubscribe}
+          disabled={isSubscribeDisabled}
+          class="slds-m-left_x-small"
+        ></lightning-button>
+        <lightning-button
+          variant="destructive"
+          label="Unsubscribe"
+          title="Unsubscribe"
+          onclick={handleUnsubscribe}
+          disabled={isUnsubscribeDisabled}
+          class="slds-m-left_x-small"
+        ></lightning-button>
+      </div>
+      <div>
+        <ul class="slds-chat-list">
+          <template for:each={lines} for:item="line">
+            <li class={line.liClass} key={line.id}>
+              <div class="slds-chat-message">
+                <div class="slds-chat-message__body">
+                  <div class={line.textClass}>
+                    <span>{line.text__c}</span>
+                  </div>
+                  <div class="slds-chat-message__meta">
+                    {line.Speaker__c} •
+                    <lightning-formatted-date-time
+                      value={line.CreatedDate}
+                      hour="2-digit"
+                      minute="2-digit"
+                      time-zone-name="short"
+                    ></lightning-formatted-date-time>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </template>
+          <li
+            class="slds-chat-listitem slds-chat-listitem_inbound"
+            key={currentLine.id}
+          >
+            <div class="slds-chat-message">
+              <div class="slds-chat-message__body">
+                <div
+                  class="slds-chat-message__text slds-chat-message__text_inbound"
+                >
+                  <span
+                    class="slds-icon-typing slds-is-animated"
+                    title="Customer is typing"
+                  >
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-assistive-text">Customer is typing</span>
+                  </span>
+                  <span aria-hidden="true">{currentLine.text__c}</span>
+                </div>
+                <div class="slds-chat-message__meta">
+                  {currentLine.Speaker__c} •
+                  <lightning-formatted-date-time
+                    value={currentLine.CreatedDate}
+                    hour="2-digit"
+                    minute="2-digit"
+                    time-zone-name="short"
+                  ></lightning-formatted-date-time>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li
+            class="slds-chat-listitem slds-chat-listitem_outbound"
+            key={currentAgentLine.id}
+          >
+            <div class="slds-chat-message">
+              <div class="slds-chat-message__body">
+                <div
+                  class="slds-chat-message__text slds-chat-message__text_outbound"
+                >
+                  <span
+                    class="slds-icon-typing slds-is-animated"
+                    title="Agent is typing"
+                  >
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-icon-typing__dot"></span>
+                    <span class="slds-assistive-text">Agent is speaking</span>
+                  </span>
+                  <span aria-hidden="true">{currentAgentLine.text__c}</span>
+                </div>
+                <div class="slds-chat-message__meta">
+                  {currentAgentLine.Speaker__c} •
+                  <lightning-formatted-date-time
+                    value={currentAgentLine.CreatedDate}
+                    hour="2-digit"
+                    minute="2-digit"
+                    time-zone-name="short"
+                  ></lightning-formatted-date-time>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </lightning-card>
+  </template>

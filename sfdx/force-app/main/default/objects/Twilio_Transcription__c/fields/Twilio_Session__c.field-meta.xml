@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Twilio_Session__c</fullName>
+    <externalId>false</externalId>
+    <label>Twilio Session</label>
+    <referenceTo>Twilio_Session__c</referenceTo>
+    <relationshipLabel>Twilio Transcriptions</relationshipLabel>
+    <relationshipName>Twilio_Transcriptions</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

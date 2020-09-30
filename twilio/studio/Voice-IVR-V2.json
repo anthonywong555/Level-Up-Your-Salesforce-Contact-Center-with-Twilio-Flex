@@ -1,0 +1,175 @@
+{
+    "description": "Bot flow for creating a Flex webchat task",
+    "states": [
+      {
+        "name": "Trigger",
+        "type": "trigger",
+        "transitions": [
+          {
+            "event": "incomingMessage"
+          },
+          {
+            "next": "Stream_googleSTT",
+            "event": "incomingCall"
+          },
+          {
+            "event": "incomingRequest"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": 40,
+            "y": -250
+          }
+        }
+      },
+      {
+        "name": "SendMessageToAgent",
+        "type": "send-to-flex",
+        "transitions": [
+          {
+            "next": "UpsertTwilioSession2",
+            "event": "callComplete"
+          },
+          {
+            "event": "failedToEnqueue"
+          },
+          {
+            "event": "callFailure"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": -50,
+            "y": 650
+          },
+          "workflow": "WW6989fcf532f7a6f4adcc21ac65cd77e4",
+          "channel": "TC47e9af5f1fc69a6847e93ef016ef9e31",
+          "attributes": "{\"name\": \"{{trigger.call.From}}\", \"channelType\": \"voice\", \"callSid\": \"{{trigger.call.CallSid}}\",\"sfdcObjectId\": \"{{widgets.UpsertTwilioSession.parsed.id}}\"}"
+        }
+      },
+      {
+        "name": "UpsertTwilioSession",
+        "type": "run-function",
+        "transitions": [
+          {
+            "next": "SendMessageToAgent",
+            "event": "success"
+          },
+          {
+            "next": "SendMessageToAgentWithoutId",
+            "event": "fail"
+          }
+        ],
+        "properties": {
+          "service_sid": "ZS96311f86fde3a8a113a826f3e4436cac",
+          "environment_sid": "ZEb1544d34065c60981f17666764b4bd02",
+          "offset": {
+            "x": 100,
+            "y": 190
+          },
+          "function_sid": "ZH60b6440999f4ba8180e78ba9653ae218",
+          "parameters": [
+            {
+              "value": "Twilio_Session__c",
+              "key": "sobject"
+            },
+            {
+              "value": "{\"Twilio_Call_SID__c\":\"{{trigger.call.CallSid}}\"}",
+              "key": "records"
+            },
+            {
+              "value": "Twilio_Call_SID__c",
+              "key": "extIdField"
+            }
+          ],
+          "url": "https://serverless-1059-dev.twil.io/sfdc/crud/upsert"
+        }
+      },
+      {
+        "name": "UpsertTwilioSession2",
+        "type": "run-function",
+        "transitions": [
+          {
+            "event": "success"
+          },
+          {
+            "event": "fail"
+          }
+        ],
+        "properties": {
+          "service_sid": "ZS96311f86fde3a8a113a826f3e4436cac",
+          "environment_sid": "ZEb1544d34065c60981f17666764b4bd02",
+          "offset": {
+            "x": -30,
+            "y": 930
+          },
+          "function_sid": "ZH60b6440999f4ba8180e78ba9653ae218",
+          "parameters": [
+            {
+              "value": "Twilio_Session__c",
+              "key": "sobject"
+            },
+            {
+              "value": "{\"Twilio_Call_SID__c\":\"{{trigger.call.CallSid}}\",\"Twilio_Task_SID__c\":\"{{widgets.SendMessageToAgent.sid}}\"}",
+              "key": "records"
+            },
+            {
+              "value": "Twilio_Call_SID__c",
+              "key": "extIdField"
+            }
+          ],
+          "url": "https://serverless-1059-dev.twil.io/sfdc/crud/upsert"
+        }
+      },
+      {
+        "name": "SendMessageToAgentWithoutId",
+        "type": "send-to-flex",
+        "transitions": [
+          {
+            "event": "callComplete"
+          },
+          {
+            "event": "failedToEnqueue"
+          },
+          {
+            "event": "callFailure"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": 340,
+            "y": 660
+          },
+          "workflow": "WW6989fcf532f7a6f4adcc21ac65cd77e4",
+          "channel": "TC47e9af5f1fc69a6847e93ef016ef9e31",
+          "attributes": "{\"name\": \"{{trigger.call.From}}\", \"channelType\": \"voice\", \"callSid\": \"{{trigger.call.CallSid}}\"}"
+        }
+      },
+      {
+        "name": "Stream_googleSTT",
+        "type": "fork-stream",
+        "transitions": [
+          {
+            "next": "UpsertTwilioSession",
+            "event": "next"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": 90,
+            "y": -20
+          },
+          "stream_name": "SfdcMediaStream",
+          "stream_transport_type": "websocket",
+          "stream_action": "start",
+          "stream_track": "both_tracks",
+          "stream_url": "wss://<<ngork url>>"
+        }
+      }
+    ],
+    "initial_state": "Trigger",
+    "flags": {
+      "allow_concurrent_calls": true
+    }
+  }

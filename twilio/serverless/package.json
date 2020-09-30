@@ -1,0 +1,25 @@
+{
+  "name": "serverless",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "twilio-run",
+    "deploy": "twilio-run deploy"
+  },
+  "dependencies": {
+    "ajv": "^6.12.5",
+    "ajv-errors": "^1.0.1",
+    "axios": "^0.20.0",
+    "jsforce": "^1.10.0",
+    "querystring": "^0.2.0",
+    "salesforce-jwt-promise": "^0.1.8",
+    "twilio": "^3.49.3"
+  },
+  "devDependencies": {
+    "twilio-run": "^2.6.0"
+  },
+  "engines": {
+    "node": "10"
+  }
+}

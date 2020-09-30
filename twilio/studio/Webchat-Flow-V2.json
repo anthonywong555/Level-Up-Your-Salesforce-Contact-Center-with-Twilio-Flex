@@ -1,0 +1,215 @@
+{
+    "description": "Bot flow for creating a Flex webchat task",
+    "states": [
+      {
+        "name": "Trigger",
+        "type": "trigger",
+        "transitions": [
+          {
+            "next": "UpsertTwilioSession",
+            "event": "incomingMessage"
+          },
+          {
+            "event": "incomingCall"
+          },
+          {
+            "event": "incomingRequest"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": 0,
+            "y": -10
+          }
+        }
+      },
+      {
+        "name": "SendMessageToAgent",
+        "type": "send-to-flex",
+        "transitions": [
+          {
+            "next": "UpsertTwilioSession2",
+            "event": "callComplete"
+          },
+          {
+            "event": "failedToEnqueue"
+          },
+          {
+            "event": "callFailure"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": -140,
+            "y": 950
+          },
+          "workflow": "WW6989fcf532f7a6f4adcc21ac65cd77e4",
+          "channel": "TCce5c834bb9401422d78b02138822ac86",
+          "attributes": "{\"name\": \"{{trigger.message.ChannelAttributes.from}}\", \"channelType\": \"{{trigger.message.ChannelAttributes.channel_type}}\", \"channelSid\": \"{{trigger.message.ChannelSid}}\",\"sfdcObjectId\": \"{{widgets.GetTwilioSession.parsed.records[0].Id}} \"}"
+        }
+      },
+      {
+        "name": "UpsertTwilioSession",
+        "type": "run-function",
+        "transitions": [
+          {
+            "next": "GetTwilioSession",
+            "event": "success"
+          },
+          {
+            "next": "SendMessageToAgentWithoutId",
+            "event": "fail"
+          }
+        ],
+        "properties": {
+          "service_sid": "ZSd4dbdc277af5d7acd5c66e0a12a6a3cd",
+          "environment_sid": "ZEd06f943e0d54a5c4045d51bca941490c",
+          "offset": {
+            "x": 100,
+            "y": 190
+          },
+          "function_sid": "ZHc897d437da873948ec7a706307a835e8",
+          "parameters": [
+            {
+              "value": "Twilio_Session__c",
+              "key": "sobject"
+            },
+            {
+              "value": "{\"Twilio_Chat_Channel_SID__c\":\"{{trigger.message.ChannelSid}}\"}",
+              "key": "records"
+            },
+            {
+              "value": "Twilio_Chat_Channel_SID__c",
+              "key": "extIdField"
+            }
+          ],
+          "url": "https://serverless-4110-dev.twil.io/sfdc/crud/upsert"
+        }
+      },
+      {
+        "name": "UpsertTwilioSession2",
+        "type": "run-function",
+        "transitions": [
+          {
+            "event": "success"
+          },
+          {
+            "event": "fail"
+          }
+        ],
+        "properties": {
+          "service_sid": "ZSd4dbdc277af5d7acd5c66e0a12a6a3cd",
+          "environment_sid": "ZEd06f943e0d54a5c4045d51bca941490c",
+          "offset": {
+            "x": -140,
+            "y": 1230
+          },
+          "function_sid": "ZHc897d437da873948ec7a706307a835e8",
+          "parameters": [
+            {
+              "value": "Twilio_Session__c",
+              "key": "sobject"
+            },
+            {
+              "value": "{\"Twilio_Chat_Channel_SID__c\":\"{{trigger.message.ChannelSid}}\",\"Twilio_Task_SID__c\":\"{{widgets.SendMessageToAgent.sid}}\"}",
+              "key": "records"
+            },
+            {
+              "value": "Twilio_Chat_Channel_SID__c",
+              "key": "extIdField"
+            }
+          ],
+          "url": "https://serverless-4110-dev.twil.io/sfdc/crud/upsert"
+        }
+      },
+      {
+        "name": "GetTwilioSession",
+        "type": "run-function",
+        "transitions": [
+          {
+            "next": "foundTwilioSession",
+            "event": "success"
+          },
+          {
+            "next": "SendMessageToAgentWithoutId",
+            "event": "fail"
+          }
+        ],
+        "properties": {
+          "service_sid": "ZS6e2db458cf6daf02f5115a756d3879f8",
+          "environment_sid": "ZEd7ea218dc16238a97504ac52feefe2e1",
+          "offset": {
+            "x": -80,
+            "y": 490
+          },
+          "function_sid": "ZHf36a37f8365f007eddb7d3c98825d5ce",
+          "parameters": [
+            {
+              "value": "SELECT Id FROM Twilio_Session__c WHERE Twilio_Chat_Channel_SID__c = '{{trigger.message.ChannelSid}}'",
+              "key": "query"
+            }
+          ],
+          "url": "https://serverless-6869-dev.twil.io/sfdc/query/soql"
+        }
+      },
+      {
+        "name": "foundTwilioSession",
+        "type": "split-based-on",
+        "transitions": [
+          {
+            "next": "SendMessageToAgentWithoutId",
+            "event": "noMatch"
+          },
+          {
+            "next": "SendMessageToAgent",
+            "event": "match",
+            "conditions": [
+              {
+                "friendly_name": "If value greater_than 0",
+                "arguments": [
+                  "{{widgets.GetTwilioSession.parsed.totalSize}}"
+                ],
+                "type": "greater_than",
+                "value": "0"
+              }
+            ]
+          }
+        ],
+        "properties": {
+          "input": "{{widgets.GetTwilioSession.parsed.totalSize}}",
+          "offset": {
+            "x": -110,
+            "y": 700
+          }
+        }
+      },
+      {
+        "name": "SendMessageToAgentWithoutId",
+        "type": "send-to-flex",
+        "transitions": [
+          {
+            "event": "callComplete"
+          },
+          {
+            "event": "failedToEnqueue"
+          },
+          {
+            "event": "callFailure"
+          }
+        ],
+        "properties": {
+          "offset": {
+            "x": 380,
+            "y": 710
+          },
+          "workflow": "WW6989fcf532f7a6f4adcc21ac65cd77e4",
+          "channel": "TCce5c834bb9401422d78b02138822ac86",
+          "attributes": "{\"name\": \"{{trigger.message.ChannelAttributes.from}}\", \"channelType\": \"{{trigger.message.ChannelAttributes.channel_type}}\", \"channelSid\": \"{{trigger.message.ChannelSid}}\"}"
+        }
+      }
+    ],
+    "initial_state": "Trigger",
+    "flags": {
+      "allow_concurrent_calls": true
+    }
+  }

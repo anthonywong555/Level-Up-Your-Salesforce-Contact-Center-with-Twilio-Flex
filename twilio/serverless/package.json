@@ -14,7 +14,7 @@
     "jsforce": "^1.10.0",
     "querystring": "^0.2.0",
     "salesforce-jwt-promise": "^0.1.8",
-    "twilio": "^3.49.3"
+    "twilio": "^3.79.0"
   },
   "devDependencies": {
     "twilio-run": "^2.6.0"
